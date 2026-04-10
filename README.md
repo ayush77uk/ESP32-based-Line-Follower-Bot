@@ -50,7 +50,7 @@ RIGHT_ENABLE   → GPIO 13  (PWM)
 
 ## BLE Commands (Format : Text UTF-8)
 + s`<number>` : Sets the base speed of bot
-+ p`<number>` : Sets P (Proprtional constant)
++ p`<number>` : Sets P (Proportional constant)
 + i`<number>` : Sets I (Integral constant)
 + d`<number>` : Sets D (Derivative constant)
 
