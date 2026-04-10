@@ -1,4 +1,4 @@
-# Code for ES32 based Line Follower Bot (Work in Progress)
+# Code for ESP32 based Line Follower Bot (Work in Progress)
 
 ## Overview
 This project implements a line follower robot using an ESP32, a 5-channel IR sensor array, and an L298 motor driver. The robot uses a PID control system for smooth line tracking and allows real-time tuning of speed and PID parameters via Bluetooth Low Energy (BLE).
