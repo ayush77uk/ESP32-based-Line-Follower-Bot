@@ -49,9 +49,9 @@ RIGHT_ENABLE   → GPIO 13  (PWM)
 - Motor speeds are adjusted according to the correction to counter the error.
 
 ## BLE Commands (Format : Text UTF-8)
-+ s<number> : Sets the base speed of bot
-+ p<number> : Sets P (Proprtional constant)
-+ i<number> : Sets I (Integral constant)
-+ d<number> : Sets D (Derivative constant)
++ s`<number>` : Sets the base speed of bot
++ p`<number>` : Sets P (Proprtional constant)
++ i`<number>` : Sets I (Integral constant)
++ d`<number>` : Sets D (Derivative constant)
 
 //Use any BLE mobile app (Recommended : "nrf Connect") to send commands to the esp32 over BLE
