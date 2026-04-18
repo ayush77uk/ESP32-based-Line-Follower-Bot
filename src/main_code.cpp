@@ -27,9 +27,9 @@ bool on_state = false;
 #define RIGHT_EN 13
 
 //PID Constants==============================
-float Kp = 30;
-float Ki = 5;
-float Kd = 20;
+float Kp = 10;
+float Ki = 1;
+float Kd = 7;
 
 float error = 0;
 float last_error = 0;
@@ -120,23 +120,23 @@ void setMotor(int leftSpeed, int rightSpeed) {
 
   // Left Motor
   if (leftSpeed >= 0) {
-    digitalWrite(LEFT_IN1, HIGH);
-    digitalWrite(LEFT_IN2, LOW);
+    digitalWrite(LEFT_IN1, LOW); //was high
+    digitalWrite(LEFT_IN2, HIGH); // was low
     ledcWrite(ledcChan_left, leftSpeed);
   } else {
-    digitalWrite(LEFT_IN1, LOW);
-    digitalWrite(LEFT_IN2, HIGH);
+    digitalWrite(LEFT_IN1, HIGH); //was low
+    digitalWrite(LEFT_IN2, LOW); //was high
     ledcWrite(ledcChan_left, -leftSpeed);
   }
 
   // Right Motor
   if (rightSpeed >= 0) {
-    digitalWrite(RIGHT_IN1, HIGH);
-    digitalWrite(RIGHT_IN2, LOW);
+    digitalWrite(RIGHT_IN1, LOW); // was high
+    digitalWrite(RIGHT_IN2, HIGH);  //was low
     ledcWrite(ledcChan_right, rightSpeed);
   } else {
-    digitalWrite(RIGHT_IN1, LOW);
-    digitalWrite(RIGHT_IN2, HIGH);
+    digitalWrite(RIGHT_IN1, HIGH);  //was low
+    digitalWrite(RIGHT_IN2, LOW); //was high
     ledcWrite(ledcChan_right, -rightSpeed);
   }
 }
