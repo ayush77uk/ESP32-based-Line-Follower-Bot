@@ -1,0 +1,60 @@
+#include <Arduino.h>
+
+//===========IR sensor pins===================
+#define SR2 36
+#define SR1 39
+#define S0  34
+#define SL1 35
+#define SL2 32
+
+//===========Analog sensor threshold==========
+int threshold = 3000;
+
+//=============================================
+
+bool onLine(int pin) {
+  return analogRead(pin) < threshold;
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(S0,  INPUT);
+  pinMode(SL1, INPUT);
+  pinMode(SL2, INPUT);
+  pinMode(SR1, INPUT);
+  pinMode(SR2, INPUT);
+
+  Serial.println("IR Sensor Test Ready.");
+  Serial.println("Format: [SL2, SL1, S0, SR1, SR2]");
+  Serial.println("1 = BLACK (on line), 0 = WHITE (off line)");
+  Serial.println("-------------------------------------------");
+}
+
+void loop() {
+  int sl2 = onLine(SL2) ? 1 : 0;
+  int sl1 = onLine(SL1) ? 1 : 0;
+  int s0  = onLine(S0)  ? 1 : 0;
+  int sr1 = onLine(SR1) ? 1 : 0;
+  int sr2 = onLine(SR2) ? 1 : 0;
+
+  // Print as array
+  Serial.print("[");
+  Serial.print(sr2); Serial.print(", ");
+  Serial.print(sr1); Serial.print(", ");
+  Serial.print(s0);  Serial.print(", ");
+  Serial.print(sl1); Serial.print(", ");
+  Serial.print(sl2);
+  Serial.print("]");
+
+  // Also print raw analog values for threshold calibration
+  Serial.print("   raw: [");
+  Serial.print(analogRead(SL2)); Serial.print(", ");
+  Serial.print(analogRead(SL1)); Serial.print(", ");
+  Serial.print(analogRead(S0));  Serial.print(", ");
+  Serial.print(analogRead(SR1)); Serial.print(", ");
+  Serial.print(analogRead(SR2));
+  Serial.println("]");
+
+  delay(200);  // print 5 times per second, easy to read
+}

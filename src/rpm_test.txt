@@ -1,0 +1,106 @@
+#include <Arduino.h>
+#include "../lib/config.h"
+#include "../lib/ble/ble.h"
+#include "ble_setup.h"
+
+#define LED_PIN LED_BUILTIN
+const char SERVICE_UUID[]        = "4fafc202-1fb5-459e-8fcc-c5c9c331914b";
+const char CHARACTERISTIC_UUID[] = "cec5483e-36e1-4688-b7f5-ea07361b26a8";
+
+bool on_state = false;
+
+//===========IR sensor pins===================
+#define SR2 36
+#define SR1 39
+#define S0  34
+#define SL1 35
+#define SL2 32
+
+//===========motor driver pins================
+#define LEFT_IN1  33
+#define LEFT_IN2  25
+#define RIGHT_IN1 26
+#define RIGHT_IN2 27
+#define LEFT_EN   12
+#define RIGHT_EN  13
+
+//===========ledc variables===================
+int ledcChan_left  = 0;
+int ledcChan_right = 1;
+int ledcFreq = 5000;
+int ledcRes  = 8;
+
+//===========test speed=======================
+int base_speed = 70;  // change this to test at different speeds
+
+// Dummy PID vars (needed for ble_setup signature)
+float Kp = 0, Ki = 0, Kd = 0;
+
+void setMotor(int leftSpeed, int rightSpeed) {
+  leftSpeed  = constrain(leftSpeed,  -255, 255);
+  rightSpeed = constrain(rightSpeed, -255, 255);
+
+  // Left Motor
+  if (leftSpeed >= 0) {
+    digitalWrite(LEFT_IN1, LOW);
+    digitalWrite(LEFT_IN2, HIGH);
+    ledcWrite(ledcChan_left, leftSpeed);
+  } else {
+    digitalWrite(LEFT_IN1, HIGH);
+    digitalWrite(LEFT_IN2, LOW);
+    ledcWrite(ledcChan_left, -leftSpeed);
+  }
+
+  // Right Motor
+  if (rightSpeed >= 0) {
+    digitalWrite(RIGHT_IN1, LOW);
+    digitalWrite(RIGHT_IN2, HIGH);
+    ledcWrite(ledcChan_right, rightSpeed);
+  } else {
+    digitalWrite(RIGHT_IN1, HIGH);
+    digitalWrite(RIGHT_IN2, LOW);
+    ledcWrite(ledcChan_right, -rightSpeed);
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+
+  pinMode(LEFT_IN1,  OUTPUT);
+  pinMode(LEFT_IN2,  OUTPUT);
+  pinMode(RIGHT_IN1, OUTPUT);
+  pinMode(RIGHT_IN2, OUTPUT);
+  pinMode(LEFT_EN,   OUTPUT);
+  pinMode(RIGHT_EN,  OUTPUT);
+
+  digitalWrite(LEFT_EN,  LOW);
+  digitalWrite(RIGHT_EN, LOW);
+
+  // LEDC setup
+  ledcSetup(ledcChan_left,  ledcFreq, ledcRes);
+  ledcSetup(ledcChan_right, ledcFreq, ledcRes);
+  ledcAttachPin(LEFT_EN,  ledcChan_left);
+  ledcAttachPin(RIGHT_EN, ledcChan_right);
+
+  // BLE setup — send "1" to toggle motors, "sXXX" to change speed
+  ble_setup(SERVICE_UUID,
+    CHARACTERISTIC_UUID,
+    &on_state,
+    LEFT_EN, RIGHT_EN,
+    LEFT_IN1, LEFT_IN2,
+    RIGHT_IN1, RIGHT_IN2,
+    &base_speed,
+    &Kp, &Ki, &Kd,
+    ledcChan_left, ledcChan_right);
+
+  Serial.println("Motor test ready. Send '1' over BLE to toggle.");
+}
+
+void loop() {
+  if (on_state) {
+    setMotor(base_speed, base_speed);  // both motors same speed
+  } else {
+    setMotor(0, 0);
+  }
+}
