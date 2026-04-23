@@ -25,9 +25,9 @@ bool on_state = false;
 #define RIGHT_EN  13
 
 //===========PID Constants====================
-float Kp = 500;
+float Kp = 300;
 float Ki = 0;
-float Kd = 25;
+float Kd = 40;
 
 float error      = 0;
 float last_error = 0;
@@ -38,7 +38,7 @@ float last_time  = 0;
 float dt         = 0;
 
 //===========Motor speed======================
-int base_speed = 170;
+int base_speed = 200;
 int maxSpeed   = 255;
 
 int left_motor  = 0;
@@ -61,6 +61,7 @@ bool ledState = false;
 
 bool black_track = true;
 //=============================================
+
 
 void setMotor(int leftSpeed, int rightSpeed) {
   leftSpeed  = constrain(leftSpeed,  -maxSpeed, maxSpeed);
@@ -134,6 +135,12 @@ void pid_control() {
   right_motor = constrain(base_speed - correction, -maxSpeed, maxSpeed);
 }
 
+bool allBlack() {
+  return onLine(S0) && onLine(SL1) && onLine(SL2)
+      && onLine(SR1) && onLine(SR2);
+}
+
+
 //=============================================
 
 void setup() {
@@ -180,9 +187,20 @@ void setup() {
 
 void loop() {
   if (on_state) {
-    error = get_error();
-    pid_control();
-    setMotor(left_motor, right_motor);
+
+    if (allBlack()) {
+      // Intersection detected — ignore PID, drive straight through
+      error      = 0;
+      derivative = 0;
+      integral   = 0;
+      setMotor(base_speed, base_speed);
+    }
+    else {
+      error = get_error();
+      pid_control();
+      setMotor(left_motor, right_motor);
+    }
+    
   }
   else {
     setMotor(0, 0);

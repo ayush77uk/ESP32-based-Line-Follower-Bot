@@ -8,7 +8,8 @@
 #define SL2 32
 
 //===========Analog sensor threshold==========
-int threshold = 3000;
+int threshold = 3000
+;
 
 //=============================================
 
