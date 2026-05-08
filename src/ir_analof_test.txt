@@ -1,3 +1,5 @@
+//This is a test code file for checking the analog output readings of the IR sensors to help to configure the threshold values for the bot 
+
 #include <Arduino.h>
 
 //===========IR sensor pins===================
